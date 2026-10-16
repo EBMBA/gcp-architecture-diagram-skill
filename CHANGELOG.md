@@ -25,3 +25,6 @@ All notable changes to this project are documented here. The format follows
 - Reference on GCP resource hierarchy and network boundaries.
 - Generic shapes from Material Symbols (user, browser, server, internet…).
 - Example diagram, unit tests, CI.
+
+[Unreleased]: https://github.com/EBMBA/gcp-architecture-diagram-skill/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/EBMBA/gcp-architecture-diagram-skill/releases/tag/v0.1.0
