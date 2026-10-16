@@ -455,6 +455,22 @@ def validate_tree(tree):
                 if b != a and la.intersects(abs_box(b)):
                     warnings.append(f"label of '{a}' overlaps icon '{b}'")
 
+    for cid in icons:
+        p = cells[cid].get("parent")
+        lb = label_box(cid)
+        if lb and p in cells and p not in ("0", "1") and is_container(cells[p]) and abs_box(p) \
+                and not abs_box(p).contains(lb):
+            warnings.append(f"label of '{cid}' sticks out of its container '{p}' (widen the container or move the icon)")
+
+    def title_box(gid):
+        b, st = abs_box(gid), parse_style(cells[gid].get("style"))
+        lines = label_lines(cells[gid].get("value"))
+        if not lines or not b:
+            return None
+        size = float(st.get("fontSize", 13))
+        w = max(len(l) for l in lines) * size * (0.62 if st.get("fontStyle", "1") == "1" else 0.56)
+        return Box(b.x + 12, b.y + 6, w, size * 1.3 * len(lines))
+
     # edges
     for eid in edges:
         e = cells[eid]
@@ -494,6 +510,12 @@ def validate_tree(tree):
             for other in icons:
                 if other not in skip and abs_box(other).hits_segment(x1, y1, x2, y2):
                     warnings.append(f"edge {eid} ({src}->{tgt}) passes through '{other}'")
+            for gid in vertices:
+                if is_container(cells[gid]) and gid not in (src, tgt):
+                    tb_ = title_box(gid)
+                    if tb_ and tb_.hits_segment(x1, y1, x2, y2, shrink=0):
+                        warnings.append(f"edge {eid} ({src}->{tgt}) crosses the title of group '{gid}'")
+            for other in icons:
                 lb = label_box(other)
                 if lb and lb.hits_segment(x1, y1, x2, y2, shrink=0):
                     warnings.append(f"edge {eid} ({src}->{tgt}) crosses the label of '{other}' "

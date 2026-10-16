@@ -17,6 +17,10 @@ All notable changes to this project are documented here. The format follows
 - Layout validator: duplicate IDs, floating edges, overlapping icons, edges through icons or labels,
   edge labels on group borders, more than one bend, near-miss alignment, overlapping edges, children
   outside their container.
+- Examples: `web-app` (Cloud Run), `gke-hybrid` (GKE + Cloud Interconnect) and `hub-and-spoke`
+  (Network Connectivity Center, multi-project, VPC Service Controls, legacy icons).
+- Reference: Shared VPC and hub-and-spoke (NCC, VPC peering) drawing rules.
+- Validator also flags edges crossing a group title and labels sticking out of their group.
 - `name.src.drawio` → `name.drawio` build convention, so the source is never hand-edited after build.
 - Reference on GCP resource hierarchy and network boundaries.
 - Generic shapes from Material Symbols (user, browser, server, internet…).

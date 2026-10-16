@@ -1,0 +1,114 @@
+<mxfile host="gcp-architecture-diagram-skill">
+  <diagram name="GKE hybrid app">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1740" pageHeight="960" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="&lt;b&gt;GKE application with hybrid connectivity&lt;/b&gt;&lt;br&gt;Architecture team | 2026-10-16 | v1" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;spacing=8;fontFamily=Google Sans,Roboto,Arial,sans-serif;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="460" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- lanes (absolute center y): top 252, main 432, hybrid 612, ops 762 -->
+        <mxCell id="user" value="Users" style="gcpShape=users;" vertex="1" parent="1">
+          <mxGeometry x="48" y="408" width="48" height="48" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="gc" value="Google Cloud" style="gcpGroup=google_cloud;" vertex="1" parent="1">
+          <mxGeometry x="200" y="100" width="1240" height="820" as="geometry"/>
+        </mxCell>
+        <mxCell id="prj" value="Project: acme-prod" style="gcpGroup=project;" vertex="1" parent="gc">
+          <mxGeometry x="30" y="40" width="1180" height="750" as="geometry"/>
+        </mxCell>
+
+        <!-- global edge, outside the VPC -->
+        <mxCell id="armor" value="Cloud Armor&lt;br&gt;WAF policy" style="gcpIcon=cloud_armor;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" vertex="1" parent="prj">
+          <mxGeometry x="70" y="80" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="lb" value="Cloud Load Balancing&lt;br&gt;global external ALB" style="gcpIcon=cloud_load_balancing;" vertex="1" parent="prj">
+          <mxGeometry x="70" y="260" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <!-- VPC (global) > subnet (regional) > GKE cluster -->
+        <mxCell id="vpc" value="VPC: prod-vpc (global)" style="gcpGroup=vpc;" vertex="1" parent="prj">
+          <mxGeometry x="260" y="40" width="690" height="480" as="geometry"/>
+        </mxCell>
+        <mxCell id="subnet" value="subnet-gke · europe-west1 · 10.10.0.0/20" style="gcpGroup=subnet;fontStyle=0;fontSize=12;" vertex="1" parent="vpc">
+          <mxGeometry x="30" y="110" width="404" height="270" as="geometry"/>
+        </mxCell>
+        <mxCell id="gke" value="GKE regional cluster: gke-prod" style="gcpGroup=cluster;" vertex="1" parent="subnet">
+          <mxGeometry x="30" y="40" width="344" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="fe" value="Deployment&lt;br&gt;frontend" style="gcpIcon=category:containers;" vertex="1" parent="gke">
+          <mxGeometry x="40" y="70" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="be" value="Deployment&lt;br&gt;backend" style="gcpIcon=category:containers;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="gke">
+          <mxGeometry x="240" y="70" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <!-- regional services in the VPC, outside the subnet -->
+        <mxCell id="router" value="Cloud Router&lt;br&gt;europe-west1 · ASN 64514" style="gcpIcon=cloud_router;" vertex="1" parent="vpc">
+          <mxGeometry x="560" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="sql" value="Cloud SQL&lt;br&gt;PostgreSQL · private IP" style="gcpIcon=cloud_sql;" vertex="1" parent="vpc">
+          <mxGeometry x="560" y="220" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <!-- hybrid attachment: in the project, between VPC and on-prem -->
+        <mxCell id="ic" value="Cloud Interconnect&lt;br&gt;Dedicated · 2x10 Gbps" style="gcpIcon=cloud_interconnect;" vertex="1" parent="prj">
+          <mxGeometry x="1050" y="440" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <!-- ops lane -->
+        <mxCell id="ops" value="Operations" style="gcpGroup=logical;" vertex="1" parent="prj">
+          <mxGeometry x="220" y="550" width="480" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="log" value="Cloud Logging" style="gcpIcon=cloud_logging;" vertex="1" parent="ops">
+          <mxGeometry x="108" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="sm" value="Secret Manager&lt;br&gt;db + ERP credentials" style="gcpIcon=secret_manager;" vertex="1" parent="ops">
+          <mxGeometry x="324" y="40" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <!-- on-premises -->
+        <mxCell id="onprem" value="On-premises data center" style="gcpGroup=on_premises;" vertex="1" parent="1">
+          <mxGeometry x="1507" y="520" width="190" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="erp" value="ERP server&lt;br&gt;10.200.0.15" style="gcpShape=server;" vertex="1" parent="onprem">
+          <mxGeometry x="71" y="68" width="48" height="48" as="geometry"/>
+        </mxCell>
+
+        <!-- edges -->
+        <mxCell id="e1" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="user" target="lb">
+          <mxGeometry x="-0.6" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" value="policy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=none;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="armor" target="lb">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="HTTPS · NEG" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="lb" target="fe">
+          <mxGeometry x="-0.5" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" value="HTTP :8080" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="fe" target="be">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" value="private IP :5432" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="be" target="sql">
+          <mxGeometry x="0.3" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" value="ERP API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="be" target="ic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="ic" target="erp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" value="BGP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=none;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="router" target="ic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" value="secrets" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="be" target="sm">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e10" value="logs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;dashed=1;exitX=0.1163;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="gke" target="log">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

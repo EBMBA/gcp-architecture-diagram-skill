@@ -9,7 +9,8 @@ Generate Google Cloud architecture diagrams as native `.drawio` files using the 
 product icons** (https://cloud.google.com/icons), embedded in the file so it opens anywhere. Optionally
 export to PNG, SVG or PDF with the diagram XML embedded (exports stay editable in draw.io).
 
-All paths below are relative to this skill's directory. `SCRIPT` = `python3 scripts/gcp_drawio.py`.
+`SCRIPT` = `python3 <this skill's directory>/scripts/gcp_drawio.py`. Use the absolute path: diagrams can be
+written anywhere. Other paths below are relative to the skill's directory.
 
 ## Workflow
 
@@ -26,7 +27,9 @@ All paths below are relative to this skill's directory. `SCRIPT` = `python3 scri
    against the source silently miss. (Building a file without `.src` rebuilds it in place, for diagrams
    later edited in draw.io.)
 6. **Export** if asked: `SCRIPT export diagram.drawio -f png` (also `svg`, `pdf`). Then **look at the PNG**
-   (Read it) and fix anything the validator can't see: cramped labels, unbalanced composition.
+   (Read it) and fix anything the validator can't see: cramped labels, unbalanced composition. Export
+   needs draw.io desktop (the script finds it in standard locations, or `DRAWIO_BIN`). If it is missing,
+   deliver the `.drawio` and tell the user to install it (`brew install --cask drawio` on macOS).
 7. **Companion guide:** write `diagram.md` next to it (title, numbered flow, services and their role,
    key design decisions).
 8. Open the result (`open` on macOS, `xdg-open` on Linux) or print the path.
@@ -48,7 +51,8 @@ Modes:
 - Per cell override: add `gcpIconMode=legacy` to a single cell's style.
 - **Networking-heavy technical diagrams** (hybrid connectivity, hub-and-spoke, security perimeters) end up
   with many identical *Networking* icons in `modern` mode (Load Balancing, Armor, Router, Interconnect,
-  VPN, NAT). Offer `legacy` mode in that case when the user hasn't chosen.
+  VPN, NAT). Offer `legacy` mode in that case when the user hasn't chosen. If you can't ask, keep `modern`
+  and say in your reply that `--mode legacy` would make those icons distinct.
 
 ## Placeholder styles
 
@@ -72,7 +76,7 @@ The script turns these into full styles. Extra style keys you add (e.g. `fontSty
 ```
 
 Keys: `references/icons.md`. `gcpIcon` also accepts aliases (`gcs`, `bq`, `pubsub`, `lb`…) and
-`category:<name>` to show a category itself. `gcpShape`: `user`, `users`, `browser`, `mobile`, `server`,
+`category:<name>` to show a category itself. `gcpShape`: `user`, `users`, `browser` (= `laptop`), `mobile`, `server`,
 `database`, `internet`, `datacenter`, `external_api`, `other_cloud`, `storage`.
 
 ## Boundaries (groups)
@@ -99,11 +103,16 @@ Container mechanics (critical):
 ## Layout rules
 
 - **Left to right**: users and clients on the LEFT, data stores and external systems on the RIGHT.
-- Icons 64x64, generic shapes 48x48. **Minimum horizontal step: 200px** between icon left edges (room for
-  edge labels). **Minimum vertical step between lanes: 180px** (icon + 2-line label + gap).
-- **Add 30px to a step for every group border the edge between the two icons crosses** (e.g. Cloud Run
-  outside the VPC → Cloud SQL inside VPC + subnet: 2 borders → 260px). Lay out the deepest nesting first,
-  then derive group sizes from their content.
+- Icons 64x64, generic shapes 48x48. Steps are measured **between centers** (works for mixed sizes).
+  **Minimum horizontal step: 200px** (room for edge labels). **Minimum vertical step between lanes:
+  180px** (icon + 2-line label + gap).
+- **Add 30px to a step, horizontal or vertical, for every group border crossed between the two icons**
+  (e.g. Cloud Run outside the VPC → Cloud SQL inside VPC + subnet: 2 borders → 260px). Add the height of
+  a group title (40px) when a lane starts right under one. Lay out the deepest nesting first, then
+  derive group sizes from their content.
+- **Size groups including labels.** Estimate ~7px per character at 12px and 16px per line; a 2-line
+  label under a 64px icon needs ~100px of height in total. The validator warns when a label sticks out
+  of its group.
 - Within a flow, use the same step for the same situation. Mixed gaps read as sloppy.
 - Secondary services (monitoring, logging, secrets, CI/CD) go in a lane **below** the main flow, or in a
   side `logical` group, not interleaved with the request path.
@@ -153,8 +162,9 @@ edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;s
 - An edge may start or end on a **group** (e.g. "all workloads in the cluster → Cloud Logging"). To keep it
   straight, set `exitX = (target_center_x - group_x) / group_width` (same idea for `exitY`).
 - **At most one bend per edge.** If an edge needs more, move a node; don't add waypoints.
-- Two edges between the same lanes must not share a corridor: use different exit/entry points
-  (e.g. `exitY=0.35` and `exitY=0.65`).
+- **Several edges on the same side of an icon** (a hub): spread them with `exitX` (top/bottom side) or
+  `exitY` (left/right side) at 0.25 / 0.5 / 0.75, **ordered like their targets** (leftmost target →
+  leftmost exit) so they don't cross. Same for two edges sharing a corridor between two lanes.
 
 ## Audience
 
@@ -165,7 +175,8 @@ edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;s
 
 ## Self-check before delivering
 
-The build step catches structure and geometry issues. Then check the exported image:
+The build step catches structure and geometry issues. It does **not** check spacing minima, label-to-label
+proximity or balance. Check those in the exported image:
 1. Every edge is straight or has one clean bend, and none crosses an icon or another edge's path.
 2. No label touches an icon, an edge or a group border.
 3. Boundaries are correct for GCP (global VPC, regional subnets, serverless outside the VPC).
@@ -175,4 +186,7 @@ The build step catches structure and geometry issues. Then check the exported im
 
 - `references/icons.md`: every icon key, alias, category and group kind (generated, authoritative)
 - `references/gcp-hierarchy.md`: resource hierarchy and network boundaries, with placement rules
-- `examples/`: worked source diagrams (`*.src.drawio`) with their rendering, to copy patterns from
+- `examples/`: worked source diagrams with their rendering and guide, to copy patterns from:
+  `web-app` (Cloud Run, private-IP data services, events, ops lane), `gke-hybrid` (GKE workloads,
+  Cloud Armor, Interconnect + Cloud Router, hub node with corner labels, edge from a group) and
+  `hub-and-spoke` (multi-project NCC hub, VPC and hybrid spokes, VPC-SC perimeter, PSC, legacy mode)

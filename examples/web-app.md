@@ -27,6 +27,6 @@
 
 ## Design decisions
 
-- Cloud Run and Pub/Sub are managed services, so they sit in the project, outside the VPC. Only the
-  private-IP data services are drawn inside the subnet.
+- Cloud Run and Pub/Sub are managed services, so they sit in the project, outside the VPC. Cloud SQL and
+  Memorystore use private IPs (private services access): they are drawn in the VPC, outside any subnet.
 - Analytics is asynchronous (dashed edges): a BigQuery outage never blocks an order.

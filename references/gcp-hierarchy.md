@@ -48,6 +48,9 @@ Organization ─┬─ Folder ─┬─ Project ── resources
    cluster itself, when it is drawn as a single icon instead of a box.
 6. Load balancers: the global external Application LB sits at the edge, **outside the VPC**, between
    users and backends. Internal LBs sit inside the subnet of their frontend IP.
+   Cloud Armor is a policy attached to the LB backend: fold it into the LB label ("+ Cloud Armor") in
+   simple diagrams; when security matters, draw it as its own icon next to the LB with an association
+   edge (`dashed=1;endArrow=none;`, label `policy`).
 7. VPC Service Controls: `vpc_sc` perimeter around the *projects / services* it protects (often
    BigQuery, Cloud Storage), not around the VPC.
 8. Hybrid: `on_premises` box on the far right (or left). Never straddle a border with an icon (its label
@@ -58,6 +61,30 @@ Organization ─┬─ Folder ─┬─ Project ── resources
    - Data path: workload → Interconnect/VPN → on-prem system, as normal edges. Cloud Router connects to
      the Interconnect/VPN with an association edge (`dashed=1;endArrow=none;`, label `BGP`): it exchanges
      routes, it does not carry traffic.
+
+## Multi-VPC topologies
+
+**Shared VPC:** one `project` box for the *host project* containing the `vpc`, and separate `project`
+boxes for the *service projects* whose workloads sit in the host VPC's subnets. Draw the workloads inside
+the host VPC's subnets, and label them with their service project (`GKE · project app-prod`). Don't draw
+a second VPC.
+
+**Hub-and-spoke with Network Connectivity Center** (Google's recommended pattern; see
+`examples/hub-and-spoke`):
+- A hub `project` containing a transit `vpc` (Cloud Router, VLAN attachments), the
+  `network_connectivity_center` icon **outside any VPC** (the NCC hub is a global project resource), and
+  shared services (Cloud DNS, hierarchical firewall policies).
+- One `project` + `vpc` box per spoke, stacked in a column on the right of the hub.
+- NCC → each spoke VPC box: association edges (`dashed=1;endArrow=none;`, label `VPC spoke`). The VPN or
+  Interconnect icon → NCC: association edge `hybrid spoke`. They are attachments, not hops; data edges
+  stay inside the spokes.
+- Put NCC on the middle spoke's lane: one straight edge, and one L-shaped edge up and one down to the
+  other spokes (exit top / bottom, `entryX=0` on the spoke VPC box).
+
+**Hub-and-spoke with VPC Network Peering** (older pattern): edges between `vpc` boxes labeled `peering`
+(`dashed=1;startArrow=block;endArrow=block;`). Peering is **not transitive**: if spokes talk to each
+other or reach on-prem through the hub, draw the network appliance (`compute_engine` labeled `NVA`) or
+the VPN that makes it possible.
 
 ## Connections into the VPC
 

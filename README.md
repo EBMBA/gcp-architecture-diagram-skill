@@ -7,7 +7,11 @@ An agent skill (Claude Code and other agents supporting `SKILL.md`) that generat
 architecture diagrams** as native, editable **draw.io** files, using the **official Google Cloud
 product icons**. Inspired by [vidanov/aws-architecture-diagram-skill](https://github.com/vidanov/aws-architecture-diagram-skill).
 
-![example](examples/web-app.png)
+![example](examples/hub-and-spoke.png)
+
+*Hub-and-spoke network with Network Connectivity Center, rendered in `legacy` icon mode.* More in
+[`examples/`](examples): a Cloud Run web app and GKE with hybrid connectivity (default `modern` icons),
+each with its source, rendering and companion guide.
 
 ## What it does
 

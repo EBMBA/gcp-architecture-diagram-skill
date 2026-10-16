@@ -1,0 +1,146 @@
+<mxfile host="gcp-architecture-diagram-skill">
+  <diagram name="Hub-and-spoke with Network Connectivity Center">
+    <mxGraphModel dx="1400" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1840" pageHeight="1140" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="&lt;b&gt;Hub-and-spoke network with Network Connectivity Center&lt;/b&gt;&lt;br&gt;Example | 2026-10-16 | v1" style="text;html=1;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;spacing=8;fontFamily=Google Sans,Roboto,Arial,sans-serif;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="560" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Lanes (absolute center y): prod 330, hub/main + data 660, dev 960.
+             Columns (absolute center x): on-prem 110, Interconnect 400, Router 600, NCC 820, spokes 1150 / 1350 / 1580, internet 1780. -->
+
+        <!-- on-premises, far left -->
+        <mxCell id="onprem" value="On-premises data center" style="gcpGroup=on_premises;" vertex="1" parent="1">
+          <mxGeometry x="10" y="550" width="200" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="corp" value="Corporate network&lt;br&gt;10.0.0.0/8" style="gcpShape=server;" vertex="1" parent="onprem">
+          <mxGeometry x="76" y="86" width="48" height="48" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="gc" value="Google Cloud" style="gcpGroup=google_cloud;" vertex="1" parent="1">
+          <mxGeometry x="300" y="100" width="1410" height="1000" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== hub project (abs 330,300) ===== -->
+        <mxCell id="hub" value="Project: net-hub" style="gcpGroup=project;" vertex="1" parent="gc">
+          <mxGeometry x="30" y="200" width="630" height="700" as="geometry"/>
+        </mxCell>
+        <mxCell id="transit" value="VPC: transit-vpc" style="gcpGroup=vpc;" vertex="1" parent="hub">
+          <mxGeometry x="150" y="60" width="240" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="router" value="Cloud Router&lt;br&gt;europe-west1 · ASN 64514" style="gcpIcon=cloud_router;" vertex="1" parent="transit">
+          <mxGeometry x="88" y="68" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="ic" value="Cloud Interconnect&lt;br&gt;2 VLAN attachments" style="gcpIcon=cloud_interconnect;" vertex="1" parent="hub">
+          <mxGeometry x="38" y="328" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <!-- hub node: edges on all four sides, so its label goes top-left -->
+        <mxCell id="ncc" value="Network Connectivity Center&lt;br&gt;hub" style="gcpIcon=network_connectivity_center;labelPosition=left;verticalLabelPosition=top;align=right;verticalAlign=bottom;" vertex="1" parent="hub">
+          <mxGeometry x="458" y="328" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="shared" value="Shared network services" style="gcpGroup=logical;" vertex="1" parent="hub">
+          <mxGeometry x="20" y="500" width="390" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="fw" value="Cloud Firewall&lt;br&gt;hierarchical policies" style="gcpIcon=cloud_firewall;" vertex="1" parent="shared">
+          <mxGeometry x="58" y="48" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="dns" value="Cloud DNS&lt;br&gt;private zones · forwarding" style="gcpIcon=cloud_dns;" vertex="1" parent="shared">
+          <mxGeometry x="258" y="48" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== spoke: prod (abs 1010,180) ===== -->
+        <mxCell id="prod" value="Project: app-prod" style="gcpGroup=project;" vertex="1" parent="gc">
+          <mxGeometry x="710" y="80" width="670" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="prodvpc" value="VPC: prod-vpc · 10.20.0.0/16" style="gcpGroup=vpc;" vertex="1" parent="prod">
+          <mxGeometry x="40" y="40" width="590" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="gke" value="GKE&lt;br&gt;app-cluster" style="gcpIcon=gke;" vertex="1" parent="prodvpc">
+          <mxGeometry x="68" y="78" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="sql" value="Cloud SQL&lt;br&gt;orders-db" style="gcpIcon=cloud_sql;" vertex="1" parent="prodvpc">
+          <mxGeometry x="268" y="78" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== spoke: data, inside a VPC Service Controls perimeter (abs 1010,470) ===== -->
+        <mxCell id="perim" value="VPC Service Controls perimeter" style="gcpGroup=vpc_sc;" vertex="1" parent="gc">
+          <mxGeometry x="710" y="370" width="670" height="310" as="geometry"/>
+        </mxCell>
+        <mxCell id="data" value="Project: data-prod" style="gcpGroup=project;" vertex="1" parent="perim">
+          <mxGeometry x="20" y="40" width="630" height="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="datavpc" value="VPC: data-vpc · 10.30.0.0/16" style="gcpGroup=vpc;" vertex="1" parent="data">
+          <mxGeometry x="40" y="40" width="360" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="etl" value="Compute Engine&lt;br&gt;ETL workers" style="gcpIcon=compute_engine;" vertex="1" parent="datavpc">
+          <mxGeometry x="48" y="78" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="psc" value="PSC endpoint&lt;br&gt;all-apis" style="gcpIcon=private_service_connect;" vertex="1" parent="datavpc">
+          <mxGeometry x="248" y="78" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="bq" value="BigQuery&lt;br&gt;analytics" style="gcpIcon=bigquery;" vertex="1" parent="data">
+          <mxGeometry x="518" y="118" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== spoke: dev (abs 1010,810) ===== -->
+        <mxCell id="dev" value="Project: app-dev" style="gcpGroup=project;" vertex="1" parent="gc">
+          <mxGeometry x="710" y="710" width="670" height="260" as="geometry"/>
+        </mxCell>
+        <mxCell id="devvpc" value="VPC: dev-vpc · 10.40.0.0/16" style="gcpGroup=vpc;" vertex="1" parent="dev">
+          <mxGeometry x="40" y="40" width="590" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="devvm" value="Compute Engine&lt;br&gt;dev VMs" style="gcpIcon=compute_engine;" vertex="1" parent="devvpc">
+          <mxGeometry x="68" y="78" width="64" height="64" as="geometry"/>
+        </mxCell>
+        <mxCell id="nat" value="Cloud NAT&lt;br&gt;europe-west1" style="gcpIcon=cloud_nat;" vertex="1" parent="devvpc">
+          <mxGeometry x="268" y="78" width="64" height="64" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="inet" value="Internet" style="gcpShape=internet;" vertex="1" parent="1">
+          <mxGeometry x="1756" y="936" width="48" height="48" as="geometry"/>
+        </mxCell>
+
+        <!-- ===== edges (all parent="1") ===== -->
+        <!-- data path on-prem -> Interconnect -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;startArrow=block;startFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="corp" target="ic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- NCC spokes are attachments (association edges); traffic follows the routes NCC exchanges -->
+        <mxCell id="e2" value="hybrid spoke" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=none;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="ic" target="ncc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="BGP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=none;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;dashed=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="router" target="ic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" value="VPC spoke" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=none;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;dashed=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.55;entryDx=0;entryDy=0;" edge="1" parent="1" source="ncc" target="prodvpc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" value="VPC spoke" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=none;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.55;entryDx=0;entryDy=0;" edge="1" parent="1" source="ncc" target="datavpc">
+          <mxGeometry x="-0.5" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" value="VPC spoke" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=none;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;dashed=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.55;entryDx=0;entryDy=0;" edge="1" parent="1" source="ncc" target="devvpc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- workloads inside the spokes -->
+        <mxCell id="e7" value="private IP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="gke" target="sql">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e8" value="Google APIs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="etl" target="psc">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="psc" target="bq">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="devvm" target="nat">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e11" value="egress" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1.5;strokeColor=#5F6368;endArrow=block;endFill=1;fontSize=11;fontColor=#3C4043;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="nat" target="inet">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

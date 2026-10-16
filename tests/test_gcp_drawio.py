@@ -97,6 +97,22 @@ class ValidateTest(unittest.TestCase):
         _, w, _ = self.check(diagram(icon("a", 0, 0), group, icon("b", 106, 100, parent="g"), labeled))
         self.assertTrue(any("border of group 'g'" in x for x in w), w)
 
+    def test_edge_through_group_title(self):
+        # second agent test, first draft: the logs edge ran through the "Operations" title
+        src = (ROOT / "examples/gke-hybrid.src.drawio").read_text()
+        src = src.replace('<mxGeometry x="220" y="550" width="480" height="170"',
+                          '<mxGeometry x="280" y="550" width="380" height="170"')
+        src = src.replace('<mxGeometry x="108" y="40"', '<mxGeometry x="48" y="40"')
+        src = src.replace('<mxGeometry x="324" y="40"', '<mxGeometry x="264" y="40"')
+        _, w, _ = self.check(ET.ElementTree(ET.fromstring(src)))
+        self.assertTrue(any("title of group 'ops'" in x for x in w), w)
+
+    def test_label_sticking_out_of_container(self):
+        group = ('<mxCell id="g" style="gcpGroup=logical;" vertex="1" parent="1">'
+                 '<mxGeometry x="0" y="0" width="120" height="110" as="geometry"/></mxCell>')
+        _, w, _ = self.check(diagram(group, icon("a", 28, 30, value="A very long product label", parent="g")))
+        self.assertTrue(any("sticks out" in x for x in w), w)
+
     def test_src_convention(self):
         self.assertEqual(g.default_output("x/web.src.drawio"), "x/web.drawio")
         self.assertEqual(g.default_output("web.drawio"), "web.drawio")
