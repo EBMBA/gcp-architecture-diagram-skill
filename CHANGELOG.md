@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-19
+
 ### Changed
 - The skill now lives in `skills/gcp-architecture-diagram/`: installing it no longer copies the
   repository's docs, tests and CI. Rendered examples moved to `docs/images/`.
@@ -34,5 +36,6 @@ All notable changes to this project are documented here. The format follows
 - Generic shapes from Material Symbols (user, browser, server, internet…).
 - Example diagram, unit tests, CI.
 
-[Unreleased]: https://github.com/EBMBA/gcp-architecture-diagram-skill/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/EBMBA/gcp-architecture-diagram-skill/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/EBMBA/gcp-architecture-diagram-skill/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/EBMBA/gcp-architecture-diagram-skill/releases/tag/v0.1.0
