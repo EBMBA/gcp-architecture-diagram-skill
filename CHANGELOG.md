@@ -6,6 +6,14 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+- The skill now lives in `skills/gcp-architecture-diagram/`: installing it no longer copies the
+  repository's docs, tests and CI. Rendered examples moved to `docs/images/`.
+- Manual install: symlink `skills/gcp-architecture-diagram` instead of cloning into the skills folder.
+
+### Added
+- CI check that the skill folder only contains what the skill needs.
+
 ## [0.1.0] - 2026-10-16
 
 ### Added

@@ -186,7 +186,7 @@ proximity or balance. Check those in the exported image:
 
 - `references/icons.md`: every icon key, alias, category and group kind (generated, authoritative)
 - `references/gcp-hierarchy.md`: resource hierarchy and network boundaries, with placement rules
-- `examples/`: worked source diagrams with their rendering and guide, to copy patterns from:
+- `examples/`: worked source diagrams (`*.src.drawio`) with their guide (`*.md`), to copy patterns from:
   `web-app` (Cloud Run, private-IP data services, events, ops lane), `gke-hybrid` (GKE workloads,
   Cloud Armor, Interconnect + Cloud Router, hub node with corner labels, edge from a group) and
   `hub-and-spoke` (multi-project NCC hub, VPC and hybrid spokes, VPC-SC perimeter, PSC, legacy mode)

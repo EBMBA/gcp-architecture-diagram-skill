@@ -9,7 +9,8 @@ from contextlib import redirect_stdout
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "scripts"))
+SKILL = ROOT / "skills" / "gcp-architecture-diagram"
+sys.path.insert(0, str(SKILL / "scripts"))
 import gcp_drawio as g  # noqa: E402
 
 EDGE = ("edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;"
@@ -99,7 +100,7 @@ class ValidateTest(unittest.TestCase):
 
     def test_edge_through_group_title(self):
         # second agent test, first draft: the logs edge ran through the "Operations" title
-        src = (ROOT / "examples/gke-hybrid.src.drawio").read_text()
+        src = (SKILL / "examples/gke-hybrid.src.drawio").read_text()
         src = src.replace('<mxGeometry x="220" y="550" width="480" height="170"',
                           '<mxGeometry x="280" y="550" width="380" height="170"')
         src = src.replace('<mxGeometry x="108" y="40"', '<mxGeometry x="48" y="40"')
@@ -141,7 +142,7 @@ class BuildTest(unittest.TestCase):
         self.assertEqual(r.path("pubsub", "legacy").name, "pubsub.svg")
 
     def test_examples_build_clean(self):
-        for src in (ROOT / "examples").glob("*.src.drawio"):
+        for src in (SKILL / "examples").glob("*.src.drawio"):
             out = Path(self.id().replace(".", "_") + "_" + src.name)
             try:
                 buf = io.StringIO()
@@ -158,7 +159,7 @@ class BuildTest(unittest.TestCase):
                 out.unlink(missing_ok=True)
 
     def test_unknown_icon_suggests(self):
-        p = subprocess.run([sys.executable, str(ROOT / "scripts/gcp_drawio.py"), "list", "pubsub"],
+        p = subprocess.run([sys.executable, str(SKILL / "scripts/gcp_drawio.py"), "list", "pubsub"],
                            capture_output=True, text=True)
         self.assertIn("pubsub", p.stdout)
         r = g.IconResolver(g.load_map(), "modern")

@@ -1,6 +1,6 @@
 # Hub-and-spoke network with Network Connectivity Center
 
-![diagram](hub-and-spoke.png)
+![diagram](../../../docs/images/hub-and-spoke.png)
 
 Built with `--mode legacy`: in a networking-heavy diagram, `modern` mode would draw Cloud Router,
 Interconnect, Network Connectivity Center, PSC, Cloud NAT, Cloud Firewall and Cloud DNS with the same

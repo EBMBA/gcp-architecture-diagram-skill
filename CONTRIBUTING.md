@@ -7,11 +7,15 @@ Thanks for helping improve the skill. Issues and pull requests are welcome.
 ```bash
 git clone https://github.com/EBMBA/gcp-architecture-diagram-skill
 cd gcp-architecture-diagram-skill
-python3 scripts/gcp_drawio.py fetch          # downloads Google's icon packs to ~/.cache
+python3 skills/gcp-architecture-diagram/scripts/gcp_drawio.py fetch      # downloads Google's icon packs to ~/.cache
 python3 -m unittest discover -s tests
 ```
 
-No dependencies beyond the Python 3.9+ standard library. Exports need
+No dependencies beyond the Python 3.9+ standard library.
+
+The installable skill is **`skills/gcp-architecture-diagram/`** only (that folder is what users get). Keep repo-only files
+(docs, tests, CI, images) outside it; CI fails if anything else appears there. Paths below are relative
+to the skill folder unless they start with the repo root. Exports need
 [draw.io desktop](https://github.com/jgraph/drawio-desktop/releases).
 
 ## Common contributions
@@ -39,12 +43,13 @@ No dependencies beyond the Python 3.9+ standard library. Exports need
 
 ### Add an example
 
-Add the **source** diagram (`name.src.drawio`, placeholders, before `build`) to `examples/`, plus its PNG and companion
-`.md`. Examples must build with zero warnings (a test enforces it).
+Add the **source** diagram (`name.src.drawio`, placeholders, before `build`) and its companion `.md` to
+`examples/`, and its rendering to the repo's `docs/images/name.png`. Examples must build with zero
+warnings (a test enforces it).
 
 ## Rules
 
 - **Never commit Google Cloud icon files** (SVG/PNG from the official packs). They are downloaded by
-  `fetch`. Rendered diagrams (PNG) in `examples/` are fine.
+  `fetch`. Rendered diagrams (PNG) in `docs/images/` are fine.
 - Keep the script dependency-free (standard library only).
 - Update `CHANGELOG.md` under *Unreleased*.

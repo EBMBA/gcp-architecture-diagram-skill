@@ -7,10 +7,10 @@ An agent skill (Claude Code and other agents supporting `SKILL.md`) that generat
 architecture diagrams** as native, editable **draw.io** files, using the **official Google Cloud
 product icons**. Inspired by [vidanov/aws-architecture-diagram-skill](https://github.com/vidanov/aws-architecture-diagram-skill).
 
-![example](examples/hub-and-spoke.png)
+![example](docs/images/hub-and-spoke.png)
 
 *Hub-and-spoke network with Network Connectivity Center, rendered in `legacy` icon mode.* More in
-[`examples/`](examples): a Cloud Run web app and GKE with hybrid connectivity (default `modern` icons),
+[`examples/`](skills/gcp-architecture-diagram/examples): a Cloud Run web app and GKE with hybrid connectivity (default `modern` icons),
 each with its source, rendering and companion guide.
 
 ## What it does
@@ -36,10 +36,11 @@ The agent writes a diagram with short placeholder styles; the script does the re
 ```
 
 ```bash
-python3 scripts/gcp_drawio.py fetch                       # once: download Google's icon packs
-python3 scripts/gcp_drawio.py build diagram.src.drawio    # -> diagram.drawio: embed icons + validate (--mode legacy)
-python3 scripts/gcp_drawio.py export diagram.drawio -f png
-python3 scripts/gcp_drawio.py list sql                    # find icon keys
+# SCRIPT = <skill directory>/scripts/gcp_drawio.py
+python3 SCRIPT fetch                       # once: download Google's icon packs
+python3 SCRIPT build diagram.src.drawio    # -> diagram.drawio: embed icons + validate (--mode legacy)
+python3 SCRIPT export diagram.drawio -f png
+python3 SCRIPT list sql                    # find icon keys
 ```
 
 ## Install
@@ -48,8 +49,11 @@ python3 scripts/gcp_drawio.py list sql                    # find icon keys
 # with the skills CLI
 npx skills add EBMBA/gcp-architecture-diagram-skill
 
-# or manually (Claude Code)
-git clone https://github.com/EBMBA/gcp-architecture-diagram-skill ~/.claude/skills/gcp-architecture-diagram
+# or manually (Claude Code): the skill is the skills/gcp-architecture-diagram folder
+git clone https://github.com/EBMBA/gcp-architecture-diagram-skill ~/src/gcp-architecture-diagram-skill
+ln -s ~/src/gcp-architecture-diagram-skill/skills/gcp-architecture-diagram ~/.claude/skills/gcp-architecture-diagram
+
+# then, once
 python3 ~/.claude/skills/gcp-architecture-diagram/scripts/gcp_drawio.py fetch
 ```
 
@@ -61,15 +65,16 @@ Pub/Sub → BigQuery analytics pipeline"*.
 
 ## Repository layout
 
+Only `skills/gcp-architecture-diagram/` is installed; everything else is for the project.
+
 | Path | Content |
 |---|---|
-| `SKILL.md` | Instructions the agent follows |
-| `references/icon-map.json` | Product → icon mapping (core / category / legacy), aliases |
-| `references/icons.md` | Generated list of every key (`gcp_drawio.py docs`) |
-| `references/gcp-hierarchy.md` | Resource hierarchy and network boundary rules |
-| `scripts/gcp_drawio.py` | fetch, build, validate, export, list, sheet, docs |
-| `assets/generic/` | Generic shapes (user, browser, server…) from Material Symbols |
-| `examples/` | Source diagrams and their rendering |
+| `skills/gcp-architecture-diagram/SKILL.md` | Instructions the agent follows |
+| `skills/gcp-architecture-diagram/references/` | `icon-map.json` (product → icon mapping, aliases), `icons.md` (generated key list), `gcp-hierarchy.md` (boundary rules) |
+| `skills/gcp-architecture-diagram/scripts/gcp_drawio.py` | fetch, build, validate, export, list, sheet, docs |
+| `skills/gcp-architecture-diagram/assets/generic/` | Generic shapes (user, browser, server…) from Material Symbols |
+| `skills/gcp-architecture-diagram/examples/` | Source diagrams (`*.src.drawio`) and their guides |
+| `docs/images/` | Rendered examples (README, guides) |
 | `tests/` | `python3 -m unittest discover -s tests` |
 
 ## Icons and licensing
@@ -79,16 +84,17 @@ Pub/Sub → BigQuery analytics pipeline"*.
   official icon page (https://cloud.google.com/icons) into `~/.cache/gcp-architecture-diagram/icons`
   (override with `GCP_ICONS_DIR`). Their use is subject to Google's terms; Google Cloud product names and
   icons are trademarks of Google LLC. This project is not affiliated with or endorsed by Google.
-- Generic shapes in `assets/generic/` come from [Material Symbols](https://github.com/google/material-design-icons)
-  (Apache 2.0); see `assets/generic/NOTICE.md`.
+- Generic shapes in `skills/gcp-architecture-diagram/assets/generic/` come from [Material Symbols](https://github.com/google/material-design-icons)
+  (Apache 2.0); see its `NOTICE.md`.
 
 ## Updating the icon map
 
 When Google updates its icon packs or guide:
 
 ```bash
+cd skills/gcp-architecture-diagram
 python3 scripts/gcp_drawio.py fetch --force   # re-download, reports any missing file
-python3 scripts/gcp_drawio.py sheet -o sheet.drawio && python3 scripts/gcp_drawio.py export sheet.drawio
+python3 scripts/gcp_drawio.py sheet -o /tmp/sheet.drawio && python3 scripts/gcp_drawio.py export /tmp/sheet.drawio
 python3 scripts/gcp_drawio.py docs            # regenerate references/icons.md
 ```
 

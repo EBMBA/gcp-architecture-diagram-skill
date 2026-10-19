@@ -1,6 +1,6 @@
 # Online shop: orders service
 
-![diagram](web-app.png)
+![diagram](../../../docs/images/web-app.png)
 
 ## Flow
 

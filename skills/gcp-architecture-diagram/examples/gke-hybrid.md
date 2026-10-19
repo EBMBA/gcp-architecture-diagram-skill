@@ -1,6 +1,6 @@
 # GKE application with hybrid connectivity
 
-![diagram](gke-hybrid.png)
+![diagram](../../../docs/images/gke-hybrid.png)
 
 ## Flow
 
